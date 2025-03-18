@@ -4,12 +4,16 @@
 	}
 
 	let { data }: Props = $props();
+	$inspect(data.emails);
 </script>
 
-<h1>Latest Email</h1>
-{#if data.email}
-	<p><strong>From:</strong> {data.email.from}</p>
-	<p><strong>Subject:</strong> {data.email.subject}</p>
-{:else}
-	<p>No recent emails found.</p>
-{/if}
+<div class="w-max-content grid grid-cols-3 gap-6">
+	{#each data.emails as email}
+		<div class="flex flex-col gap-1">
+			<p><strong>From:</strong> {email.from}</p>
+			<p><strong>Subject:</strong> {email.subject}</p>
+			<p><strong>Time</strong> {email.receivedTime}</p>
+			<p><strong>Label</strong> {email.label[0]}</p>
+		</div>
+	{/each}
+</div>

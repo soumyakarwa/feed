@@ -37,7 +37,7 @@ export const load: PageServerLoad = async () => {
 
 		const messagesResponse = await gmail.users.messages.list({
 			userId: 'me',
-			maxResults: 1
+			maxResults: 500
 		});
 
 		// console.log('Messages Response:', messagesResponse.data);
@@ -46,31 +46,33 @@ export const load: PageServerLoad = async () => {
 			return { email: 'No emails found' };
 		}
 
-		const emailId = messagesResponse.data.messages[0].id;
+		let emails: any[] = await Promise.all(
+			messagesResponse.data.messages.map(async (entry) => {
+				console.log('Current entry', entry);
 
-		const emailDetails = await gmail.users.messages.get({
-			userId: 'me',
-			id: emailId,
-			format: 'metadata', // Only fetch headers, no email body
-			metadataHeaders: ['From', 'Subject']
-		});
+				const emailId = entry.id;
+				const emailDetails = await gmail.users.messages.get({
+					userId: 'me',
+					id: emailId,
+					format: 'metadata', // Only fetch headers, no email body
+					metadataHeaders: ['From', 'Subject']
+				});
 
-		console.log('Email Details:', emailDetails.data);
+				const headers = emailDetails.data.payload?.headers || [];
+				const fromHeader = headers.find((header) => header.name === 'From');
+				const subjectHeader = headers.find((header) => header.name === 'Subject');
 
-		const headers = emailDetails.data.payload?.headers || [];
-		const fromHeader = headers.find((header) => header.name === 'From');
-		const subjectHeader = headers.find((header) => header.name === 'Subject');
+				return {
+					id: emailId,
+					from: fromHeader ? fromHeader.value : 'Unknown Sender',
+					subject: subjectHeader ? subjectHeader.value : 'No Subject',
+					receivedTime: new Date(parseInt(emailDetails.data.internalDate)).toLocaleString(), // Convert timestamp to readable format
+					label: emailDetails.data.labelIds // Shows inbox, spam, or other labels
+				};
+			})
+		);
 
-		const from = fromHeader ? fromHeader.value : 'Unknown Sender';
-		const subject = subjectHeader ? subjectHeader.value : 'No Subject';
-
-		return {
-			email: {
-				id: emailId,
-				from,
-				subject
-			}
-		};
+		return { emails };
 	} catch (error) {
 		console.error('❌ ERROR fetching email:', error);
 		return { error: 'Failed to fetch email' };
