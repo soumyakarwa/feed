@@ -3,4 +3,6 @@
 	let { children } = $props();
 </script>
 
-{@render children()}
+<section class="font-geist h-screen w-screen bg-black">
+	{@render children()}
+</section>

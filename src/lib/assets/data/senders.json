@@ -1,0 +1,67 @@
+[
+	{
+		"category": "Shopping",
+		"senders": [
+			"NAADAM",
+			"GIGLIO.COM",
+			"& Other Stories",
+			"Lulus",
+			"Sandro",
+			"COS",
+			"Urban Outfitters",
+			"Polo Ralph Lauren",
+			"Aéropostale",
+			"Saks OFF 5TH",
+			"The North Face",
+			"Veronica Beard",
+			"Calvin Klein Outlet",
+			"Club Monaco",
+			"OAK + FORT",
+			"Everlane",
+			"Montce Swim",
+			"Madewell",
+			"J.Crew",
+			"Bergdorf Goodman Sale",
+			"7 For All Mankind",
+			"REVOLVE",
+			"Longchamp",
+			"Beauty at Bloomingdale's",
+			"Glossier",
+			"Ana Luisa",
+			"G-STAR",
+			"Bergdorf Goodman",
+			"Fabletics",
+			"Loeffler Randall",
+			"Flook The Label",
+			"West Elm"
+		]
+	},
+	{
+		"category": "Career",
+		"senders": ["Glassdoor", "Generative AI via LinkedIn"]
+	},
+	{
+		"category": "Health",
+		"senders": ["CVS ExtraCare"]
+	},
+	{
+		"category": "Food",
+		"senders": ["Uber Eats", "Jack's Wife Freda", "Starbucks", "Plant City"]
+	},
+	{
+		"category": "Experiences",
+		"senders": ["Amtrak Guest Rewards", "Tripadvisor", "Eventbrite"]
+	},
+	{
+		"category": "News",
+		"senders": ["Medium Daily Digest", "Epoch Times Good Evening", "The Juggernaut"]
+	},
+	{
+		"category": "Transportation",
+		"senders": ["Uber", "Uber Receipts", "Lyft"]
+	},
+	{
+		"category": "Other",
+		"senders": ["StreetEasy", "Delta Air Lines"]
+	}
+]
