@@ -8,6 +8,9 @@ export default {
 
 	theme: {
 		extend: {
+			colors: {
+				primary: 'var(--white)'
+			},
 			fontFamily: {
 				geist: ['GeistMono']
 			},

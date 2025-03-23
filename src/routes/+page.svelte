@@ -2,7 +2,6 @@
 	import emails from '$lib/assets/data/emails.json';
 	import { getSenderName } from '$lib/util/getSenderName';
 	import Folder from '$lib/components/Folder.svelte';
-	import { greatest } from 'd3';
 	import { tick, onMount } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';
 
@@ -13,53 +12,55 @@
 	interface MovingFolder {
 		sender: string;
 		subjects: string[];
+		label: string;
 		x: number;
 		y: number;
 		vx: number;
 		vy: number;
 	}
 
-	const emailMap = new Map();
+	const emailMap = new Map<string, { subject: string; label: string }[]>();
 	let { data }: Props = $props();
+	let totalUnreadEmails = $state(0);
 
 	emails.forEach((email) => {
-		// Extract name from the "from" field
 		const name = getSenderName(email.from);
+		const subject = email.subject.toUpperCase();
+		const label = email.label?.[0] ?? 'Unknown'; // fallback in case label is missing
 
 		if (!emailMap.has(name)) {
 			emailMap.set(name, []);
 		}
 
-		emailMap.get(name).push(email.subject.toUpperCase());
+		emailMap.get(name).push({ subject, label });
+		totalUnreadEmails++;
 	});
 
 	let folders: Writable<MovingFolder[]> = writable([]);
 
 	folders.set(
-		Array.from(emailMap.entries()).map(([sender, subjects]) => ({
+		Array.from(emailMap.entries()).map(([sender, emails]) => ({
 			sender,
-			subjects,
+			subjects: emails.map((e) => e.subject),
+			label: emails[0]?.label ?? 'Unknown', // grab the first label
 			x: 5 + Math.random() * 85,
 			y: Math.random() * 90,
-			vx: (Math.random() - 0.5) * 0.3,
-			vy: (Math.random() - 0.5) * 0.4
+			vx: (Math.random() - 0.5) * 0.15,
+			vy: (Math.random() - 0.5) * 0.2
 		}))
 	);
 
-	let folderWidths: number[] = $state([0]);
-	let folderHeights: number[] = $state([0]);
+	let clicked = $state(Array($folders.length).fill(false));
 
 	onMount(async () => {
 		async function animate() {
-			// console.log('in animate');
 			requestAnimationFrame(animate);
-
 			folders.update((items) =>
 				items.map((folder, index) => {
 					let { x, y, vx, vy } = folder;
 
-					if (x < 0 || x > 90) vx *= -1;
-					if (y < 0 || y > 80) vy *= -1;
+					if (x < 0 || x >= 85) vx *= -1;
+					if (y < 0 || y >= 90) vy *= -1;
 
 					x += vx;
 					y += vy;
@@ -72,8 +73,6 @@
 		await animate();
 		await tick();
 	});
-
-	// $inspect(folderWidths, folderHeights);
 </script>
 
 <div class="relative h-full w-full text-lg text-white">
@@ -81,10 +80,31 @@
 		<div
 			class="absolute"
 			style={`left: ${entry.x}%; top: ${entry.y}%`}
-			bind:clientWidth={folderWidths[i]}
-			bind:clientHeight={folderHeights[i]}
+			role="presentation"
+			onclick={() => {
+				clicked[i] = !clicked[i];
+				if (clicked[i]) {
+					totalUnreadEmails -= entry.subjects.length;
+				}
+				tick();
+			}}
 		>
-			<Folder sender={entry.sender} subjects={entry.subjects} />
+			<Folder
+				sender={entry.sender}
+				subjects={entry.subjects}
+				category={entry.label}
+				isClicked={clicked[i]}
+			/>
 		</div>
 	{/each}
+	<div class="absolute right-0 top-0 px-1 py-0.5 text-2xl uppercase text-white">
+		UNREAD: {totalUnreadEmails}
+		{#if totalUnreadEmails > 400}
+			!!!
+		{:else if totalUnreadEmails > 200}
+			:///
+		{:else}
+			:)))
+		{/if}
+	</div>
 </div>

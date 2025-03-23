@@ -6,3 +6,8 @@
 	font-family: 'GeistMono';
 	src: url('$lib/assets/fonts/GeistMonoVariableVF.ttf') format('truetype');
 }
+
+:root {
+	--white: #f6f6f6;
+	--black: #303030;
+}
