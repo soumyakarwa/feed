@@ -51,6 +51,7 @@
 	);
 
 	let clicked = $state(Array($folders.length).fill(false));
+	let active = $state(Array($folders.length).fill(true));
 
 	onMount(async () => {
 		async function animate() {
@@ -82,10 +83,15 @@
 			style={`left: ${entry.x}%; top: ${entry.y}%`}
 			role="presentation"
 			onclick={() => {
+				// if (active[i]) {
 				clicked[i] = !clicked[i];
 				if (clicked[i]) {
 					totalUnreadEmails -= entry.subjects.length;
 				}
+				// setTimeout(() => {
+				// 	active[i] = false;
+				// }, 5000);
+				// }
 				tick();
 			}}
 		>
@@ -94,6 +100,7 @@
 				subjects={entry.subjects}
 				category={entry.label}
 				isClicked={clicked[i]}
+				isActive={active[i]}
 			/>
 		</div>
 	{/each}

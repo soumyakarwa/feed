@@ -8,9 +8,10 @@
 		subjects: string[];
 		category: 'UNREAD' | 'CATEGORY_PROMOTIONS' | string;
 		isClicked: boolean;
+		isActive: boolean;
 	}
 
-	let { sender, subjects, category, isClicked }: Props = $props();
+	let { sender, subjects, category, isClicked, isActive }: Props = $props();
 
 	const imgRange = [75, 250];
 	const titleSizeRange = [0.5, 1.2];
@@ -35,7 +36,13 @@
 	})();
 </script>
 
-<div class={['relative cursor-pointer', isClicked ? 'z-10' : 'z-5']} role="presentation">
+<div
+	class={[
+		'relative cursor-pointer transition-opacity ease-linear'
+		// isActive ? 'opacity-100' : 'opacity-0'
+	]}
+	role="presentation"
+>
 	<img
 		src={category == 'CATEGORY_PROMOTIONS' ? folderPromotions : folderUnread}
 		alt="Mac Folder Icon"
